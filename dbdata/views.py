@@ -15,6 +15,7 @@ from .serializers import (DepartmentSerializer, BulkDepartmentSerializer,
                           BulkJobSerializer, BulkHiredEmployeeSerializer,
                           HiredEmployeeSerializer)
 from .models import Department, Job, HiredEmployee
+from .backup import backup_all_tables, list_backups, restore_table
 
 
 
@@ -227,3 +228,64 @@ def post_department_data(request):
             )
             print(response.json())
     return HttpResponse("Departments")
+
+
+# Add this class at the end of the file
+class BackupTablesView(APIView):
+    def get(self, request, format=None):
+        """Backup all tables to AVRO format"""
+        try:
+            backup_files = backup_all_tables()
+            return Response({
+                "status": "success",
+                "message": "Backup completed successfully",
+                "files": backup_files
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "message": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# Add these classes after BackupTablesView
+class ListBackupsView(APIView):
+    def get(self, request, format=None):
+        """List all available backups"""
+        try:
+            backups = list_backups()
+            return Response({
+                "status": "success",
+                "backups": backups
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "message": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class RestoreTableView(APIView):
+    def post(self, request, format=None):
+        """Restore a table from a backup file"""
+        table_name = request.data.get('table_name')
+        backup_file = request.data.get('backup_file')
+        
+        if not table_name or not backup_file:
+            return Response({
+                "status": "error",
+                "message": "Both table_name and backup_file are required"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            records_restored = restore_table(table_name, backup_file)
+            return Response({
+                "status": "success",
+                "message": f"Successfully restored {records_restored} records to {table_name} table",
+                "table": table_name,
+                "records_restored": records_restored
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "message": str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

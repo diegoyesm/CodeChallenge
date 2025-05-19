@@ -2,7 +2,7 @@ from django.urls import path
 
 from .views import (DepartmentList, DepartmentListSerializer, DepartmentBulkListCreateView,
                     JobBulkListCreateView, HiredEmployeeBulkListCreateView, EmployeesHiredQuarter,
-                    EmployeesHiredDepartment, post_department_data)
+                    EmployeesHiredDepartment, post_department_data, BackupTablesView, ListBackupsView, RestoreTableView)
 
 
 urlpatterns = [
@@ -24,4 +24,7 @@ urlpatterns = [
          EmployeesHiredDepartment.as_view(),
          name="employees-hired-department"),
     path('client/post-department-data/', post_department_data, name='post-department-data'),
+    path("api/backup/", BackupTablesView.as_view(), name="backup"),
+path("api/list-backups/", ListBackupsView.as_view(), name="list-backups"),
+path("api/restore-table/", RestoreTableView.as_view(), name="restore-table"),    
 ]

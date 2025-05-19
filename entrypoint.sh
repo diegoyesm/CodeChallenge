@@ -11,7 +11,17 @@ then
     echo "PostgreSQL started"
 fi
 
-python manage.py flush --no-input
+# Create migrations directory if it doesn't exist
+mkdir -p /usr/src/app/dbdata/migrations
+touch /usr/src/app/dbdata/migrations/__init__.py
+
+# Make migrations first
+python manage.py makemigrations dbdata
+
+# Apply migrations before flush
 python manage.py migrate
+
+# Only flush after migrations have been applied
+python manage.py flush --no-input
 
 exec "$@"
