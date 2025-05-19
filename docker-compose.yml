@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   dbmigration:
@@ -17,9 +17,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=dbcode
-      - POSTGRES_PASSWORD=dbcode
-      - POSTGRES_DB=dbchallenge
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
 
 volumes:
   postgres_data:

@@ -4,6 +4,7 @@ from .models import Department, Job, HiredEmployee, CustomUser
 
 # Register your models here.
 
+
 @admin.register(CustomUser)
 class UserAdmin(DefaultUserAdmin):
     pass
